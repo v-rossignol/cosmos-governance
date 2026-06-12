@@ -1,0 +1,41 @@
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { AuthBootstrap } from '@components/auth/AuthBootstrap';
+import { AuthLayout } from '@components/auth/AuthLayout';
+import { ProtectedRoute } from '@components/auth/ProtectedRoute';
+import { AdminLayout } from '@components/layout/AdminLayout';
+import { LoginPage } from '@pages/LoginPage';
+import { ServerHealthPage } from '@pages/ServerHealthPage';
+import { useAuthStore } from '@stores/authStore';
+
+const GuestLoginPage = () => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const hasCheckedSession = useAuthStore((state) => state.hasCheckedSession);
+
+  if (hasCheckedSession && isAuthenticated) {
+    return <Navigate to="/health" replace />;
+  }
+
+  return <LoginPage />;
+};
+
+function App() {
+  return (
+    <AuthBootstrap>
+      <Routes>
+        <Route index element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<AuthLayout />}>
+          <Route index element={<GuestLoginPage />} />
+        </Route>
+        <Route element={<ProtectedRoute />}>
+          <Route element={<AdminLayout />}>
+            <Route index element={<Navigate to="/health" replace />} />
+            <Route path="health" element={<ServerHealthPage />} />
+          </Route>
+        </Route>
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </AuthBootstrap>
+  );
+}
+
+export default App;
