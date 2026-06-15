@@ -23,16 +23,12 @@ export default defineConfig({
   server: {
     port: 3002,
     allowedHosts: ['infinity-dev.home.rh', 'localhost'],
-    // Set VITE_BEHIND_CADDY=1 when using http://infinity-dev.home.rh via Caddy (port 80).
-    ...(process.env.VITE_BEHIND_CADDY === '1'
-      ? {
-          origin: 'http://infinity-dev.home.rh',
-          hmr: {
-            host: 'infinity-dev.home.rh',
-            clientPort: 80,
-          },
-        }
-      : {}),
+    // Public URL when accessed through the Caddy reverse proxy
+    origin: 'http://infinity-dev.home.rh',
+    hmr: {
+      host: 'infinity-dev.home.rh',
+      clientPort: 80,
+    },
     proxy: {
       '/infinity': {
         target: 'http://localhost:4000',

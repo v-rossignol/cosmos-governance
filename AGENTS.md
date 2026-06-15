@@ -50,15 +50,15 @@ Path aliases: `@/`, `@components/`, `@pages/`, `@stores/`, `@services/`, `@types
 
 | Area | Client | Server |
 |------|--------|--------|
-| Admin login | `POST /infinity/auth/login` → Bearer token | Implemented |
-| Session restore | `GET /infinity/admin/me` | Implemented |
-| Logout | `POST /infinity/auth/logout` then clear token | Implemented |
+| Admin login | `POST /infinity/auth/login` → `infinity_token` cookie | Implemented |
+| Session restore | `GET /infinity/admin/me` (cookie) | Implemented |
+| Logout | `POST /infinity/auth/logout` then clear user state | Implemented |
 | User list | `GET /infinity/admin/users` (service only) | Implemented |
 | Statistics | `GET /infinity/admin/statistics` (service only) | Implemented |
 | Server health | `GET /infinity/health` | Implemented |
 | Admin role check | Enforced via `/infinity/admin/me` (403 for non-admin) | Implemented |
 
-JWT is stored in **sessionStorage** for the current browser tab only. Do not use `localStorage`.
+JWT is delivered in the **`infinity_token` httpOnly cookie** (not in JSON, not in JavaScript storage). See [../contracts/auth-api.yaml](../contracts/auth-api.yaml) and [../contracts/openapi-shared.yaml](../contracts/openapi-shared.yaml).
 
 ---
 
@@ -66,11 +66,13 @@ JWT is stored in **sessionStorage** for the current browser tab only. Do not use
 
 ### Authentication
 
-- Login via `POST /infinity/auth/login` returns `{ access_token }`; store in **sessionStorage** (`tokenStorage.ts`).
-- Admin calls use `adminApi` (`baseURL: '/infinity/admin'`) with `Authorization: Bearer <token>`.
+- Login via `POST /infinity/auth/login` returns `{ user }`; the server sets the `infinity_token` cookie.
+- All API clients (`authApi`, `adminApi`, `infinityApi`) use `withCredentials: true` so cookies are sent on `/infinity/*`.
+- Do **not** store the JWT in `localStorage`, `sessionStorage`, or app state.
+- Admin calls use `adminApi` (`baseURL: '/infinity/admin'`) — cookie auth, no `Authorization` header.
 - Public operational calls use `infinityApi` (`baseURL: '/infinity'`), e.g. health.
-- On app load, call `restoreSession()` → `GET /infinity/admin/me` when a token exists.
-- Logout calls `POST /infinity/auth/logout` (with Bearer token), then clears sessionStorage.
+- On app load, call `restoreSession()` → `GET /infinity/admin/me` (cookie sent automatically).
+- Logout calls `POST /infinity/auth/logout`, then clears local user state.
 - After successful login, navigate internally to `/health` (React Router — same SPA).
 - Router `basename="/cosmos-governance"`.
 
@@ -116,7 +118,14 @@ Do not create documentation files unless explicitly requested. Code, paths, and 
 
 ## API contract
 
-Canonical reference: [../infinity/documentation/admin-api.md](../infinity/documentation/admin-api.md).
+**Source of truth:** [../contracts/](../contracts/) — OpenAPI specs and JSON Schemas. When this summary and contracts diverge, contracts win.
+
+| Spec | Scope |
+| ---- | ----- |
+| [auth-api.yaml](../contracts/auth-api.yaml) | Login, logout (`/infinity/auth/*`) |
+| [admin-api.yaml](../contracts/admin-api.yaml) | Admin routes (`/infinity/admin/*`) |
+| [game-api.yaml](../contracts/game-api.yaml) | Health check (`GET /infinity/health`) |
+| [schemas/](../contracts/schemas/) | Request/response DTO shapes |
 
 | Method | Route | Auth | Description |
 | ------ | ----- | ---- | ------------- |
@@ -127,7 +136,7 @@ Canonical reference: [../infinity/documentation/admin-api.md](../infinity/docume
 | GET | `/infinity/admin/statistics` | JWT + admin | Entity counts |
 | GET | `/infinity/health` | No | Server health |
 
-When adding or changing API calls, update the relevant service and keep types in `src/types/` aligned with server responses.
+When adding or changing API calls, update the relevant service and keep types in `src/types/` aligned with [../contracts/schemas/](../contracts/schemas/).
 
 ---
 
@@ -145,8 +154,9 @@ Do not commit secrets (`.env`, credentials). Do not create git commits unless ex
 
 ## Reference docs
 
-- [../infinity/documentation/admin-api.md](../infinity/documentation/admin-api.md) — Admin HTTP contract (canonical for this client)
-- [../infinity/documentation/infinity-api.md](../infinity/documentation/infinity-api.md) — Server API overview
+- [../contracts/](../contracts/) — API source of truth (OpenAPI, AsyncAPI, JSON Schema)
+- [../contracts/admin-api.yaml](../contracts/admin-api.yaml) — Admin routes for this client
+- [../contracts/auth-api.yaml](../contracts/auth-api.yaml) — Auth and session cookie contract
 - [../documentation/TO-BE-FIXED.md](../documentation/TO-BE-FIXED.md) — Cross-project deferred fixes
 - [README.md](README.md) — Quick start
 
@@ -170,5 +180,5 @@ Reset `useAuthStore` state in `beforeEach` when testing auth-dependent UI.
 1. `npm run test` passes.
 2. `npm run build` passes with no TypeScript errors.
 3. `npm run lint` passes (or no new lint issues in touched files).
-4. Auth uses Bearer JWT in sessionStorage per admin-api.md — no token in `localStorage`.
+4. Auth uses the `infinity_token` httpOnly cookie per [../contracts/auth-api.yaml](../contracts/auth-api.yaml) — no JWT in JavaScript storage.
 5. Protected routes redirect unauthenticated users to `/login`.

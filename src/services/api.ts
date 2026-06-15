@@ -1,27 +1,19 @@
 import axios from 'axios';
-import { tokenStorage } from './tokenStorage';
 
 export const authApi = axios.create({
   baseURL: '/infinity/auth',
+  withCredentials: true,
 });
 
 export const adminApi = axios.create({
   baseURL: '/infinity/admin',
-});
-
-adminApi.interceptors.request.use((config) => {
-  const token = tokenStorage.get();
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
+  withCredentials: true,
 });
 
 adminApi.interceptors.response.use(
   (response) => response,
   (error) => {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
-      tokenStorage.clear();
       void import('@stores/authStore').then(({ useAuthStore }) => {
         useAuthStore.setState({
           user: null,
@@ -36,4 +28,5 @@ adminApi.interceptors.response.use(
 
 export const infinityApi = axios.create({
   baseURL: '/infinity',
+  withCredentials: true,
 });

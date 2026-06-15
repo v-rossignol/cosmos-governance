@@ -13,6 +13,10 @@ export interface LoginCredentials {
   password: string;
 }
 
-export interface LoginResponse {
-  access_token: string;
+export interface AuthResponse {
+  user: {
+    id: string;
+    username: string;
+    email: string;
+  };
 }

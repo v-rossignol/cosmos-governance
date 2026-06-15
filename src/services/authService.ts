@@ -1,50 +1,37 @@
 import type { SuccessResponse } from '@/types/api';
-import type { LoginResponse, User } from '@/types/auth';
+import type { AuthResponse, User } from '@/types/auth';
 import { adminApi, authApi } from './api';
-import { tokenStorage } from './tokenStorage';
 
 export const authService = {
   async login(username: string, password: string): Promise<User> {
-    const response = await authApi.post<LoginResponse>('/login', { username, password });
-    tokenStorage.set(response.data.access_token);
+    await authApi.post<AuthResponse>('/login', { username, password });
 
     try {
       const meResponse = await adminApi.get<User>('/me');
       return meResponse.data;
     } catch (error) {
-      tokenStorage.clear();
+      try {
+        await authApi.post<SuccessResponse>('/logout');
+      } catch {
+        // Clear the cookie even when logout fails.
+      }
       throw error;
     }
   },
 
   async logout(): Promise<void> {
-    const token = tokenStorage.get();
-
     try {
-      if (token) {
-        await authApi.post<SuccessResponse>(
-          '/logout',
-          {},
-          { headers: { Authorization: `Bearer ${token}` } },
-        );
-      }
+      await authApi.post<SuccessResponse>('/logout');
     } catch {
-      // Always clear the local session even if the server request fails.
-    } finally {
-      tokenStorage.clear();
+      // Always clear local user state even if the server request fails.
     }
   },
 
   async getCurrentUser(): Promise<User | null> {
-    if (!tokenStorage.get()) {
-      return null;
-    }
-
     try {
       const response = await adminApi.get<User>('/me');
       return response.data;
     } catch {
-      tokenStorage.clear();
       return null;
     }
   },

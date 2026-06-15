@@ -1,10 +1,20 @@
-import type { AdminStatistics } from '@/types/admin';
-import type { User } from '@/types/auth';
+import type {
+  AdminStatistics,
+  ListPlanetsParams,
+  ListUsersParams,
+  PaginatedPlanets,
+  PaginatedUsers,
+} from '@/types/admin';
 import { adminApi } from './api';
 
 export const adminService = {
-  async getUsers(): Promise<User[]> {
-    const response = await adminApi.get<User[]>('/users');
+  async getUsers(params: ListUsersParams = {}): Promise<PaginatedUsers> {
+    const response = await adminApi.get<PaginatedUsers>('/users', { params });
+    return response.data;
+  },
+
+  async getPlanets(params: ListPlanetsParams = {}): Promise<PaginatedPlanets> {
+    const response = await adminApi.get<PaginatedPlanets>('/planets', { params });
     return response.data;
   },
 

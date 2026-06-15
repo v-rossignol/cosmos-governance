@@ -10,9 +10,6 @@ export const AuthLayout = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: (theme) =>
-          `radial-gradient(ellipse at top, ${theme.palette.primary.dark}22, ${theme.palette.background.default})`,
-        backgroundColor: 'background.default',
       }}
     >
       <Container maxWidth="sm">

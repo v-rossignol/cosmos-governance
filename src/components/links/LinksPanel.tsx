@@ -14,7 +14,19 @@ const EXTERNAL_LINKS = [
     description: 'Player authentication client',
     href: '/stellar-gate/',
   },
+  {
+    label: 'Solaris',
+    description: 'Solar system view client',
+    href: '/solaris/',
+  },
+  {
+    label: 'Terra View',
+    description: 'Planetary surface client',
+    href: '/terra-view/',
+  },
 ] as const;
+
+const LABEL_COLUMN_WIDTH = 120;
 
 export const LinksPanel = () => {
   return (
@@ -32,17 +44,25 @@ export const LinksPanel = () => {
         <CardContent sx={{ py: 0, '&:last-child': { pb: 0 } }}>
           <List disablePadding>
             {EXTERNAL_LINKS.map(({ label, description, href }) => (
-              <ListItem key={href} disablePadding sx={{ py: 1.5 }}>
+              <ListItem
+                key={href}
+                disablePadding
+                sx={{ py: 1.5, display: 'flex', alignItems: 'baseline', gap: 2 }}
+              >
                 <Link
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
                   underline="hover"
-                  sx={{ typography: 'body1' }}
+                  sx={{
+                    typography: 'body1',
+                    flexShrink: 0,
+                    width: LABEL_COLUMN_WIDTH,
+                  }}
                 >
                   {label}
                 </Link>
-                <Typography variant="body2" color="text.secondary" sx={{ ml: 2 }}>
+                <Typography variant="body2" color="text.secondary">
                   {description}
                 </Typography>
               </ListItem>

@@ -3,8 +3,11 @@ import { AuthBootstrap } from '@components/auth/AuthBootstrap';
 import { AuthLayout } from '@components/auth/AuthLayout';
 import { ProtectedRoute } from '@components/auth/ProtectedRoute';
 import { AdminLayout } from '@components/layout/AdminLayout';
+import { PageBackground } from '@components/layout/PageBackground';
 import { LoginPage } from '@pages/LoginPage';
 import { ServerHealthPage } from '@pages/ServerHealthPage';
+import { PlanetsPage } from '@pages/PlanetsPage';
+import { UsersPage } from '@pages/UsersPage';
 import { useAuthStore } from '@stores/authStore';
 
 const GuestLoginPage = () => {
@@ -21,6 +24,7 @@ const GuestLoginPage = () => {
 function App() {
   return (
     <AuthBootstrap>
+      <PageBackground />
       <Routes>
         <Route index element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<AuthLayout />}>
@@ -30,6 +34,8 @@ function App() {
           <Route element={<AdminLayout />}>
             <Route index element={<Navigate to="/health" replace />} />
             <Route path="health" element={<ServerHealthPage />} />
+            <Route path="users" element={<UsersPage />} />
+            <Route path="planets" element={<PlanetsPage />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/login" replace />} />

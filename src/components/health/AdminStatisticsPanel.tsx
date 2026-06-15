@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Alert,
   Box,
@@ -73,12 +74,43 @@ export const AdminStatisticsPanel = () => {
             <Grid item xs={12} sm={6} key={key}>
               <Card>
                 <CardContent>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    {label}
-                  </Typography>
-                  <Typography variant="h4" component="p">
-                    {statistics[key].toLocaleString()}
-                  </Typography>
+                  {key === 'users' || key === 'planets' ? (
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        justifyContent: 'space-between',
+                        gap: 1,
+                      }}
+                    >
+                      <Box>
+                        <Typography variant="body2" color="text.secondary" gutterBottom>
+                          {label}
+                        </Typography>
+                        <Typography variant="h4" component="p">
+                          {statistics[key].toLocaleString()}
+                        </Typography>
+                      </Box>
+                      <Button
+                        component={Link}
+                        to={key === 'users' ? '/users' : '/planets'}
+                        variant="outlined"
+                        size="small"
+                        sx={{ flexShrink: 0 }}
+                      >
+                        {key === 'users' ? 'View users' : 'View planets'}
+                      </Button>
+                    </Box>
+                  ) : (
+                    <>
+                      <Typography variant="body2" color="text.secondary" gutterBottom>
+                        {label}
+                      </Typography>
+                      <Typography variant="h4" component="p">
+                        {statistics[key].toLocaleString()}
+                      </Typography>
+                    </>
+                  )}
                 </CardContent>
               </Card>
             </Grid>
