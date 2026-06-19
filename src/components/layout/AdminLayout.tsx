@@ -48,6 +48,16 @@ export const AdminLayout = () => {
             </Button>
             <Button
               component={NavLink}
+              to="/star-systems"
+              color="inherit"
+              sx={{
+                '&.active': { color: 'primary.main' },
+              }}
+            >
+              Star systems
+            </Button>
+            <Button
+              component={NavLink}
               to="/planets"
               color="inherit"
               sx={{

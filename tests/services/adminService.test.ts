@@ -1,5 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { AdminPlanetSummary, AdminStatistics, PaginatedPlanets, PaginatedUsers } from '@/types/admin';
+import type {
+  AdminPlanetSummary,
+  AdminStarSystemSummary,
+  AdminStatistics,
+  PaginatedPlanets,
+  PaginatedStarSystems,
+  PaginatedUsers,
+} from '@/types/admin';
 import type { User } from '@/types/auth';
 
 const { adminGet } = vi.hoisted(() => ({
@@ -32,6 +39,27 @@ const mockPlanets: AdminPlanetSummary[] = [
     type: 'rocky',
     radius: 10,
     resources: { iron: 42 },
+    createdAt: '2026-06-12T10:00:00.000Z',
+    updatedAt: '2026-06-12T10:00:00.000Z',
+  },
+];
+
+const mockStarSystems: AdminStarSystemSummary[] = [
+  {
+    _id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+    name: 'Sol',
+    planets: [
+      {
+        id: 'planet-1',
+        name: 'Aurora Prime',
+        x: 100,
+        y: 200,
+        radius: 10,
+        type: 'rocky',
+        resources: { iron: 42 },
+      },
+    ],
+    visited: true,
     createdAt: '2026-06-12T10:00:00.000Z',
     updatedAt: '2026-06-12T10:00:00.000Z',
   },
@@ -103,6 +131,34 @@ describe('adminService', () => {
       mockPaginatedPlanets,
     );
     expect(adminGet).toHaveBeenCalledWith('/planets', { params: { page: 3, count: 10 } });
+  });
+
+  it('getStarSystems fetches a paginated star system list', async () => {
+    const mockPaginatedStarSystems: PaginatedStarSystems = {
+      items: mockStarSystems,
+      total: 1,
+      page: 1,
+      count: 20,
+    };
+    adminGet.mockResolvedValueOnce({ data: mockPaginatedStarSystems });
+
+    await expect(adminService.getStarSystems()).resolves.toEqual(mockPaginatedStarSystems);
+    expect(adminGet).toHaveBeenCalledWith('/systems', { params: {} });
+  });
+
+  it('getStarSystems forwards page and count query params', async () => {
+    const mockPaginatedStarSystems: PaginatedStarSystems = {
+      items: mockStarSystems,
+      total: 42,
+      page: 3,
+      count: 10,
+    };
+    adminGet.mockResolvedValueOnce({ data: mockPaginatedStarSystems });
+
+    await expect(adminService.getStarSystems({ page: 3, count: 10 })).resolves.toEqual(
+      mockPaginatedStarSystems,
+    );
+    expect(adminGet).toHaveBeenCalledWith('/systems', { params: { page: 3, count: 10 } });
   });
 
   it('getStatistics fetches entity counts', async () => {

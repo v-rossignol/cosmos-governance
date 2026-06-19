@@ -43,3 +43,34 @@ export interface PaginatedPlanets {
   page: number;
   count: number;
 }
+
+export interface SystemPlanetSummary {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+  radius: number;
+  type: PlanetType;
+  resources: Record<string, number>;
+}
+
+export interface AdminStarSystemSummary {
+  _id: string;
+  name: string;
+  planets: SystemPlanetSummary[];
+  visited: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ListStarSystemsParams {
+  page?: number;
+  count?: number;
+}
+
+export interface PaginatedStarSystems {
+  items: AdminStarSystemSummary[];
+  total: number;
+  page: number;
+  count: number;
+}

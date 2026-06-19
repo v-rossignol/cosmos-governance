@@ -7,6 +7,7 @@ import { PageBackground } from '@components/layout/PageBackground';
 import { LoginPage } from '@pages/LoginPage';
 import { ServerHealthPage } from '@pages/ServerHealthPage';
 import { PlanetsPage } from '@pages/PlanetsPage';
+import { StarSystemsPage } from '@pages/StarSystemsPage';
 import { UsersPage } from '@pages/UsersPage';
 import { useAuthStore } from '@stores/authStore';
 
@@ -35,6 +36,7 @@ function App() {
             <Route index element={<Navigate to="/health" replace />} />
             <Route path="health" element={<ServerHealthPage />} />
             <Route path="users" element={<UsersPage />} />
+            <Route path="star-systems" element={<StarSystemsPage />} />
             <Route path="planets" element={<PlanetsPage />} />
           </Route>
         </Route>

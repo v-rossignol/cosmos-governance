@@ -21,6 +21,14 @@ const STAT_LABELS: { key: keyof AdminStatistics; label: string }[] = [
   { key: 'planets', label: 'Planets' },
 ];
 
+const VIEW_ROUTES: Partial<
+  Record<keyof AdminStatistics, { to: string; buttonLabel: string }>
+> = {
+  users: { to: '/users', buttonLabel: 'View users' },
+  starSystems: { to: '/star-systems', buttonLabel: 'View star systems' },
+  planets: { to: '/planets', buttonLabel: 'View planets' },
+};
+
 export const AdminStatisticsPanel = () => {
   const [statistics, setStatistics] = useState<AdminStatistics | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -70,51 +78,55 @@ export const AdminStatisticsPanel = () => {
 
       {!isLoading && statistics && (
         <Grid container spacing={2}>
-          {STAT_LABELS.map(({ key, label }) => (
-            <Grid item xs={12} sm={6} key={key}>
-              <Card>
-                <CardContent>
-                  {key === 'users' || key === 'planets' ? (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        justifyContent: 'space-between',
-                        gap: 1,
-                      }}
-                    >
-                      <Box>
+          {STAT_LABELS.map(({ key, label }) => {
+            const viewRoute = VIEW_ROUTES[key];
+
+            return (
+              <Grid item xs={12} sm={6} key={key}>
+                <Card>
+                  <CardContent>
+                    {viewRoute ? (
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          justifyContent: 'space-between',
+                          gap: 1,
+                        }}
+                      >
+                        <Box>
+                          <Typography variant="body2" color="text.secondary" gutterBottom>
+                            {label}
+                          </Typography>
+                          <Typography variant="h4" component="p">
+                            {statistics[key].toLocaleString()}
+                          </Typography>
+                        </Box>
+                        <Button
+                          component={Link}
+                          to={viewRoute.to}
+                          variant="outlined"
+                          size="small"
+                          sx={{ flexShrink: 0 }}
+                        >
+                          {viewRoute.buttonLabel}
+                        </Button>
+                      </Box>
+                    ) : (
+                      <>
                         <Typography variant="body2" color="text.secondary" gutterBottom>
                           {label}
                         </Typography>
                         <Typography variant="h4" component="p">
                           {statistics[key].toLocaleString()}
                         </Typography>
-                      </Box>
-                      <Button
-                        component={Link}
-                        to={key === 'users' ? '/users' : '/planets'}
-                        variant="outlined"
-                        size="small"
-                        sx={{ flexShrink: 0 }}
-                      >
-                        {key === 'users' ? 'View users' : 'View planets'}
-                      </Button>
-                    </Box>
-                  ) : (
-                    <>
-                      <Typography variant="body2" color="text.secondary" gutterBottom>
-                        {label}
-                      </Typography>
-                      <Typography variant="h4" component="p">
-                        {statistics[key].toLocaleString()}
-                      </Typography>
-                    </>
-                  )}
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
+                      </>
+                    )}
+                  </CardContent>
+                </Card>
+              </Grid>
+            );
+          })}
         </Grid>
       )}
     </Box>
