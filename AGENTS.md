@@ -102,6 +102,8 @@ JWT is delivered in the **`infinity_token` httpOnly cookie** (not in JSON, not i
 
 Shared monorepo standards: [../rules/documents.md](../rules/documents.md).
 
+**Working directory:** Do not read, search, or follow links into any `documentation/` directory (monorepo root, this sub-project, or another sub-project) unless the user explicitly references a path. Links elsewhere in this file are pointers for the user — use `../contracts/` and source code for implementation context.
+
 Do not create documentation files unless explicitly requested. Code, paths, and API identifiers are in **English**.
 
 ---
@@ -153,6 +155,8 @@ Do not commit secrets (`.env`, credentials). Do not create git commits unless ex
 ---
 
 ## Reference docs
+
+Index for human navigation and explicit user references — **not** for agent auto-discovery.
 
 - [../contracts/](../contracts/) — API source of truth (OpenAPI, AsyncAPI, JSON Schema)
 - [../contracts/admin-api.yaml](../contracts/admin-api.yaml) — Admin routes for this client
