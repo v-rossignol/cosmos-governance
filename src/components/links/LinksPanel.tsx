@@ -11,18 +11,22 @@ import {
 const EXTERNAL_LINKS = [
   {
     label: 'Stellar Gate',
-    description: 'Player authentication client',
-    href: '/stellar-gate/',
+    links: [
+      { text: 'Player authentication client', href: '/stellar-gate/' },
+    ],
   },
   {
     label: 'Solaris',
-    description: 'Solar system view client',
-    href: '/solaris/',
+    links: [
+      { text: 'Solar system view client', href: '/solaris/' },
+    ],
   },
   {
     label: 'Terra View',
-    description: 'Planetary surface client',
-    href: '/terra-view/',
+    links: [
+      { text: 'Planetary surface client', href: '/terra-view/' },
+      { text: 'Planet surface Modeler', href: '/terra-view/modeler/' },
+    ],
   },
 ] as const;
 
@@ -43,28 +47,57 @@ export const LinksPanel = () => {
       <Card>
         <CardContent sx={{ py: 0, '&:last-child': { pb: 0 } }}>
           <List disablePadding>
-            {EXTERNAL_LINKS.map(({ label, description, href }) => (
+            {EXTERNAL_LINKS.map(({ label, links }) => (
               <ListItem
-                key={href}
+                key={label}
                 disablePadding
                 sx={{ py: 1.5, display: 'flex', alignItems: 'baseline', gap: 2 }}
               >
-                <Link
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  underline="hover"
-                  sx={{
-                    typography: 'body1',
-                    flexShrink: 0,
-                    width: LABEL_COLUMN_WIDTH,
-                  }}
+                <Typography
+                  variant="body1"
+                  component="span"
+                  sx={{ flexShrink: 0, width: LABEL_COLUMN_WIDTH }}
                 >
                   {label}
-                </Link>
-                <Typography variant="body2" color="text.secondary">
-                  {description}
                 </Typography>
+                <Box
+                  component="span"
+                  sx={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    alignItems: 'baseline',
+                    columnGap: 1.5,
+                    rowGap: 0.5,
+                  }}
+                >
+                  {links.map(({ text, href }, index) => (
+                    <Box
+                      key={href}
+                      component="span"
+                      sx={{ display: 'inline-flex', alignItems: 'baseline', gap: 1.5 }}
+                    >
+                      {index > 0 && (
+                        <Typography
+                          component="span"
+                          variant="body2"
+                          color="text.disabled"
+                          aria-hidden
+                        >
+                          ·
+                        </Typography>
+                      )}
+                      <Link
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        underline="hover"
+                        sx={{ typography: 'body2', color: 'text.secondary' }}
+                      >
+                        {text}
+                      </Link>
+                    </Box>
+                  ))}
+                </Box>
               </ListItem>
             ))}
           </List>
