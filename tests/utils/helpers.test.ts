@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { describe, expect, it } from 'vitest';
-import { getErrorMessage } from '@/utils/helpers';
+import { getErrorMessage, getVehiculeImageUrl } from '@/utils/helpers';
 
 describe('getErrorMessage', () => {
   it('returns a string message from a NestJS error response', () => {
@@ -48,5 +48,11 @@ describe('getErrorMessage', () => {
   it('returns the fallback for unknown values', () => {
     expect(getErrorMessage('network down', 'Fallback')).toBe('Fallback');
     expect(getErrorMessage(null, 'Fallback')).toBe('Fallback');
+  });
+});
+
+describe('getVehiculeImageUrl', () => {
+  it('builds the large vehicule media path from catalog id', () => {
+    expect(getVehiculeImageUrl('scout-x1')).toBe('/media/vehicules/scout-x1-large.png');
   });
 });

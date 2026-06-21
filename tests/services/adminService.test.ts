@@ -3,6 +3,8 @@ import type {
   AdminPlanetSummary,
   AdminStarSystemSummary,
   AdminStatistics,
+  AdminUnitType,
+  AdminUnitTypeList,
   PaginatedPlanets,
   PaginatedStarSystems,
   PaginatedUsers,
@@ -70,7 +72,27 @@ const mockStatistics: AdminStatistics = {
   cubes: 12,
   starSystems: 8,
   planets: 24,
+  vehicules: 1,
+  buildings: 0,
 };
+
+const mockVehicules: AdminUnitType[] = [
+  {
+    id: 'scout-x1',
+    name: 'Scout-X1',
+    type: 'vehicule',
+    size: 'small',
+    mobility: true,
+    speed: 1,
+    environments: ['desert', 'forest'],
+    rules: [{ range: 'hexagon', value: 1 }],
+    capabilities: { cargo: { size: 1000 } },
+    description: 'Can explore, extract, and build small structures.',
+    metadata: {},
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z',
+  },
+];
 
 describe('adminService', () => {
   beforeEach(() => {
@@ -166,5 +188,34 @@ describe('adminService', () => {
 
     await expect(adminService.getStatistics()).resolves.toEqual(mockStatistics);
     expect(adminGet).toHaveBeenCalledWith('/statistics');
+  });
+
+  it('getVehicules fetches catalog entries', async () => {
+    const mockVehiculeList: AdminUnitTypeList = {
+      items: mockVehicules,
+      total: 1,
+    };
+    adminGet.mockResolvedValueOnce({ data: mockVehiculeList });
+
+    await expect(adminService.getVehicules()).resolves.toEqual(mockVehiculeList);
+    expect(adminGet).toHaveBeenCalledWith('/units/vehicules');
+  });
+
+  it('getVehicule returns a catalog entry by id', async () => {
+    adminGet.mockResolvedValueOnce({ data: mockVehicules[0] });
+
+    await expect(adminService.getVehicule('scout-x1')).resolves.toEqual(mockVehicules[0]);
+    expect(adminGet).toHaveBeenCalledWith('/units/vehicules/scout-x1');
+  });
+
+  it('getVehicule returns null when id is not in the catalog', async () => {
+    const notFoundError = {
+      isAxiosError: true,
+      response: { status: 404 },
+    };
+    adminGet.mockRejectedValueOnce(notFoundError);
+
+    await expect(adminService.getVehicule('missing-id')).resolves.toBeNull();
+    expect(adminGet).toHaveBeenCalledWith('/units/vehicules/missing-id');
   });
 });

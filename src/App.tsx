@@ -9,6 +9,8 @@ import { ServerHealthPage } from '@pages/ServerHealthPage';
 import { PlanetsPage } from '@pages/PlanetsPage';
 import { StarSystemsPage } from '@pages/StarSystemsPage';
 import { UsersPage } from '@pages/UsersPage';
+import { VehiculesPage } from '@pages/VehiculesPage';
+import { VehiculeDetailPage } from '@pages/VehiculeDetailPage';
 import { useAuthStore } from '@stores/authStore';
 
 const GuestLoginPage = () => {
@@ -38,6 +40,8 @@ function App() {
             <Route path="users" element={<UsersPage />} />
             <Route path="star-systems" element={<StarSystemsPage />} />
             <Route path="planets" element={<PlanetsPage />} />
+            <Route path="vehicules" element={<VehiculesPage />} />
+            <Route path="vehicules/:vehiculeId" element={<VehiculeDetailPage />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/login" replace />} />

@@ -15,3 +15,10 @@ export const getErrorMessage = (error: unknown, fallback: string): string => {
 
   return fallback;
 };
+
+export const getVehiculeImageUrl = (
+  vehiculeId: string,
+  variant: 'large' = 'large',
+): string => {
+  return `/media/vehicules/${vehiculeId}-${variant}.png`;
+};

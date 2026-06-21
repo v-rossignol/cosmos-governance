@@ -19,6 +19,8 @@ const STAT_LABELS: { key: keyof AdminStatistics; label: string }[] = [
   { key: 'cubes', label: 'Cubes' },
   { key: 'starSystems', label: 'Star systems' },
   { key: 'planets', label: 'Planets' },
+  { key: 'vehicules', label: 'Vehicules' },
+  { key: 'buildings', label: 'Buildings' },
 ];
 
 const VIEW_ROUTES: Partial<
@@ -27,6 +29,7 @@ const VIEW_ROUTES: Partial<
   users: { to: '/users', buttonLabel: 'View users' },
   starSystems: { to: '/star-systems', buttonLabel: 'View star systems' },
   planets: { to: '/planets', buttonLabel: 'View planets' },
+  vehicules: { to: '/vehicules', buttonLabel: 'View vehicules' },
 };
 
 export const AdminStatisticsPanel = () => {
@@ -57,7 +60,7 @@ export const AdminStatisticsPanel = () => {
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
         <Box>
           <Typography variant="h4" component="h2" gutterBottom>
-            Object statistics
+            Objects
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Document counts from <code>GET /infinity/admin/statistics</code>

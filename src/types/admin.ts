@@ -5,6 +5,38 @@ export interface AdminStatistics {
   cubes: number;
   starSystems: number;
   planets: number;
+  vehicules: number;
+  buildings: number;
+}
+
+export type UnitCategory = 'vehicule' | 'building';
+
+export type UnitSize = 'small' | 'medium' | 'large';
+
+export interface AdminUnitTypeRule {
+  range: 'hexagon';
+  value: number;
+}
+
+export interface AdminUnitType {
+  id: string;
+  name: string;
+  type: UnitCategory;
+  size: UnitSize;
+  mobility: boolean;
+  speed: number | null;
+  environments: string[];
+  rules: AdminUnitTypeRule[];
+  capabilities: Record<string, unknown>;
+  description: string | null;
+  metadata: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdminUnitTypeList {
+  items: AdminUnitType[];
+  total: number;
 }
 
 export interface ListUsersParams {
